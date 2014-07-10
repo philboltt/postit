@@ -10,9 +10,9 @@ import (
 const dbURL = "postgres://postgres@localhost/travis_postit_test"
 
 func Test_Postit(t *testing.T) {
-	api := Api{pagesize: 10}
+	api := Api{PageSize: 10}
 	// Initialize database connection
-	err := api.initDB(dbURL)
+	err := api.InitDB(dbURL)
 	if err != nil {
 		t.Fatalf("failed to open database connection: %v", err)
 	}

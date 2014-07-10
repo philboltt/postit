@@ -13,11 +13,11 @@ import (
 )
 
 type Api struct {
-	pagesize int
+	PageSize int
 	dbMap    *gorp.DbMap
 }
 
-func (api *Api) initDB(dbURL string) error {
+func (api *Api) InitDB(dbURL string) error {
 	db, err := sql.Open("postgres", dbURL)
 	if err != nil {
 		log.Fatalf("Error opening connection to %s: %v", dbURL, err)
@@ -58,7 +58,7 @@ func (api *Api) GetAll(w rest.ResponseWriter, req *rest.Request) {
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
-		pageStr = fmt.Sprintf("LIMIT %d OFFSET %d", api.pagesize, api.pagesize*pageNum)
+		pageStr = fmt.Sprintf("LIMIT %d OFFSET %d", api.PageSize, api.PageSize*pageNum)
 	}
 	_, ok = values["category"]
 	if ok {
