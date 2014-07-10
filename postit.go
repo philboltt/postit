@@ -1,7 +1,6 @@
 package postit
 
 import (
-	"code.google.com/p/gcfg"
 	"database/sql"
 	"fmt"
 	"github.com/ant0ine/go-json-rest/rest"
@@ -14,32 +13,14 @@ import (
 )
 
 type Api struct {
-	cfg   *Config
-	dbMap *gorp.DbMap
+	pagesize int
+	dbMap    *gorp.DbMap
 }
 
-type Config struct {
-	Database struct {
-		Url string
-	}
-}
-
-const pagesize = 10
-
-func (api *Api) readConfig(filename string) error {
-	api.cfg = &Config{}
-	err := gcfg.ReadFileInto(api.cfg, filename)
+func (api *Api) initDB(dbURL string) error {
+	db, err := sql.Open("postgres", dbURL)
 	if err != nil {
-		log.Fatalf("error reading config.ini: %#v\n", err)
-		return err
-	}
-	return nil
-}
-
-func (api *Api) initDB() error {
-	db, err := sql.Open("postgres", api.cfg.Database.Url)
-	if err != nil {
-		log.Fatalf("Error opening connection to %s: %v", api.cfg.Database.Url, err)
+		log.Fatalf("Error opening connection to %s: %v", dbURL, err)
 		return err
 	}
 	api.dbMap = &gorp.DbMap{Db: db, Dialect: gorp.PostgresDialect{}}
@@ -77,7 +58,7 @@ func (api *Api) GetAll(w rest.ResponseWriter, req *rest.Request) {
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
-		pageStr = fmt.Sprintf("LIMIT %d OFFSET %d", pagesize, pagesize*pageNum)
+		pageStr = fmt.Sprintf("LIMIT %d OFFSET %d", api.pagesize, api.pagesize*pageNum)
 	}
 	_, ok = values["category"]
 	if ok {

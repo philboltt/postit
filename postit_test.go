@@ -7,16 +7,12 @@ import (
 	"testing"
 )
 
-const test_config = "test_config.ini"
+const dbURL = "postgres://postgres@localhost/travis_postit_test"
 
 func Test_Postit(t *testing.T) {
-	api := Api{}
-	err := api.readConfig(test_config)
-	if err != nil {
-		t.Fatalf("failed to read %s: %v", test_config, err)
-	}
+	api := Api{pagesize: 10}
 	// Initialize database connection
-	err = api.initDB()
+	err := api.initDB(dbURL)
 	if err != nil {
 		t.Fatalf("failed to open database connection: %v", err)
 	}
