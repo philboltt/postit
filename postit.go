@@ -35,6 +35,10 @@ func (api *Api) InitDB(dbURL string) error {
 	return nil
 }
 
+func (api *Api) CloseDB() {
+	api.dbMap.Db.Close()
+}
+
 type Postit struct {
 	Id         int64     `db:"post_id"`
 	Title      string    `db:"title"`
